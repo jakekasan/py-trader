@@ -56,11 +56,11 @@ class Ticker:
         print("Up and running at %s" % (str(self.currentTime).split("T")[0]))
 
     def request(self,company_id):
-        if self.currentTime not in self.data.index.values:
-            print("Market is closed")
-            return
-        print(str(company_id) + "  " + str(self.data[company_id][self.currentTime]))
-        return(self.data[company_id][self.currentTime])
+        temp_time = self.currentTime
+        while temp_time not in self.data.index.values:
+            temp_time -= np.timedelta64(1,"D")
+        # print(str(company_id) + " : " + str(self.data[company_id][temp_time]))
+        return(self.data[company_id][temp_time])
 
     def tick(self):
         self.currentTime += np.timedelta64(1,"D")

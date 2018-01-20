@@ -5,7 +5,8 @@ import numpy as np
 import pandas as pd
 import datetime as dt
 from datetime import timedelta
-from ticker import createDataset, Ticker, Tracker
+from ticker import createDataset, Ticker
+from tracker import Trader
 
 FILE_PATH = "../data-science/data/nyse/"
 
@@ -25,8 +26,12 @@ if __name__ == "__main__":
 
     t = Ticker(actual_dataset)
 
+    trader = Trader(t,10000)
+    trader.newHolding("AAPL",3)
+
     while(True):
-        t.status()
+        #t.status()
         t.tick()
+        trader.update()
         time.sleep(1)
-        t.request("AAPL")
+        #t.request("AAPL")
