@@ -41,7 +41,6 @@ class Trader:
             if result != False and result < 0:
                 print("An excessive p-value was found: %f" % result)
 
-
 class Holding:
     def __init__(self,ticker,company_id,time_invested,volume,monitor):
         self.time_invested = time_invested
@@ -66,7 +65,6 @@ class Holding:
         self.current_price = self.ticker.request(self.company_id)
         self.p_history.append(self.current_price)
         self.monitor.update()
-
 
 class Monitor:
     def __init__(self,company_id,ticker,resolutions=[10,20,100]):
@@ -96,7 +94,6 @@ class Monitor:
         if False in p_values:
             return(False)
         return(np.mean(p_values))
-
 
 class Bead:
     def __init__(self,resolution,monitor):
