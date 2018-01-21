@@ -27,11 +27,11 @@ if __name__ == "__main__":
     t = Ticker(actual_dataset)
 
     trader = Trader(t,10000)
-    trader.newHolding("AAPL",3)
+    #trader.newHolding("AAPL",3)
 
     while(True):
         #t.status()
         t.tick()
         trader.update()
-        time.sleep(1)
+        time.sleep(0.1)
         #t.request("AAPL")

@@ -6,7 +6,7 @@ class Trader:
     def __init__(self,ticker,wallet):
         self.holdings = []
         self.ticker = ticker
-        self.currentTime = ticker.get_time()
+        self.currentTime = self.ticker.get_time()
         self.wallet = wallet
         self.net_value = wallet
         self.monitors = []
@@ -14,18 +14,21 @@ class Trader:
         for company in self.ticker.companies:
             self.monitors.append(Monitor(company,self.ticker))
 
-    def newHolding(self,company_id,volume):
+    def goLong(self,company_id,volume,monitor):
         self.wallet -= volume * self.ticker.request(company_id)
-        self.holdings.append(Holding(self.ticker,company_id,self.currentTime,volume))
+        self.holdings.append(Holding(self.ticker,company_id,self.currentTime,volume,monitor))
+
+    def goShort(self,company_id,volume):
         pass
 
     def update(self):
+        self.currentTime = self.ticker.get_time()
         temp = 0
         for item in self.holdings:
             item.update()
             temp += item.get_net()
         self.net_value = temp
-        print("Current value of portfolio: %f" % self.net_value)
+        print("%s : Current value of portfolio: %f" % (self.currentTime,self.net_value))
         self.decision_maker()
 
     def status(self):
@@ -34,10 +37,13 @@ class Trader:
 
     def decision_maker(self):
         for monitor in self.monitors:
-            if monitor.assess() != False:
+            result = monitor.assess()
+            if result != False and result < 0:
+                print("An excessive p-value was found: %f" % result)
+
 
 class Holding:
-    def __init__(self,ticker,company_id,time_invested,volume):
+    def __init__(self,ticker,company_id,time_invested,volume,monitor):
         self.time_invested = time_invested
         self.company_id = company_id
         self.volume = volume
@@ -47,6 +53,7 @@ class Holding:
         self.value = 0
         self.p_history = []
         self.p_history.append(self.current_price)
+        self.monitor = monitor
 
     def get_value(self):
         return(self.current_price * self.volume)
@@ -58,6 +65,8 @@ class Holding:
         self.value = self.get_value()
         self.current_price = self.ticker.request(self.company_id)
         self.p_history.append(self.current_price)
+        self.monitor.update()
+
 
 class Monitor:
     def __init__(self,company_id,ticker,resolutions=[10,20,100]):
@@ -69,6 +78,7 @@ class Monitor:
         self.r_history.append(0)
         self.beadlist = []
         self.resolutions = resolutions
+        self.position = None
         for reso in resolutions:
             self.beadlist.append(Bead(reso,self))
 
@@ -82,11 +92,10 @@ class Monitor:
     def assess(self):
         p_values = []
         for bead in self.beadlist:
-            p.values.append(bead.hypo_test())
+            p_values.append(bead.hypo_test())
         if False in p_values:
             return(False)
         return(np.mean(p_values))
-
 
 
 class Bead:
@@ -112,7 +121,6 @@ class Bead:
         s = np.random.standard_t((self.resolution-1),size=10000)
         p = np.sum(s<t) / float(len(s))
         return(p)
-
 
     def update(self):
         if self.resolution > len(self.monitor.r_history):
