@@ -1,7 +1,7 @@
-# py-trader
-## the algo-trader written in Python
+# __py-trader__
+#### _the algo-trader written in Python_
 ### A simple python program that will eventually be able to read in financial data and make trades depending on given strategies
-- version 0.0.1
+- version 0.0.2
 
 ### To-Do
 - finish the decision making function in the Trader class

@@ -14,24 +14,29 @@ FILE = "prices.csv"
 
 
 if __name__ == "__main__":
-    print("Running")
+    try:
+        print("Running")
 
-    #createDataset(str(FILE_PATH+FILE),"symbol","close")
+        #createDataset(str(FILE_PATH+FILE),"symbol","close")
 
-    actual_dataset = pd.read_csv("price_movements.csv")
+        actual_dataset = pd.read_csv("price_movements.csv")
 
-    actual_dataset["date"] = pd.to_datetime(actual_dataset["date"])
+        actual_dataset["date"] = pd.to_datetime(actual_dataset["date"])
 
-    actual_dataset = actual_dataset.set_index("date")
+        actual_dataset = actual_dataset.set_index("date")
+        actual_dataset = actual_dataset.fillna(0)
 
-    t = Ticker(actual_dataset)
+        t = Ticker(actual_dataset)
 
-    trader = Trader(t,10000)
-    #trader.newHolding("AAPL",3)
+        trader = Trader(t,10000.00)
+        #trader.newHolding("AAPL",3)
 
-    while(True):
-        #t.status()
-        t.tick()
-        trader.update()
-        time.sleep(0.1)
-        #t.request("AAPL")
+        while(True):
+            #t.status()
+            t.tick()
+            trader.update()
+            trader.status()
+            #time.sleep(0.01)
+            #t.request("AAPL")
+    except KeyboardInterrupt:
+        print("Program stopped. Performance: %f" % (trader.wallet - 10000.00))
