@@ -14,24 +14,21 @@ class Trader:
         for company in self.ticker.companies:
             self.monitors.append(Monitor(company,self.ticker,[10],self))
 
-    def goLong(self,company_id,volume,monitor):
+    def Buy(self,company_id,monitor):
         if self.ticker.request(company_id) == np.nan:
             return
         print(str(self.currentTime).split("T")[0] + " : \tBuying " + str(company_id) + " @ " + str(monitor.p_history[-1]))
         monitor.position = "Long"
-        self.wallet -= float(volume * self.ticker.request(company_id))
-        self.holdings.append(Holding(self.ticker,company_id,self.currentTime,volume,monitor))
+        self.wallet -= float(self.ticker.request(company_id))
+        self.holdings.append(Holding(self.ticker,company_id,self.currentTime,monitor))
         self.monitors.remove(monitor)
 
-    def sellLong(self,holding):
+    def Sell(self,holding):
         print(str(self.currentTime).split("T")[0] + " : \tSelling " + str(holding.company_id) + " @ " + str(holding.value))
         self.wallet += holding.get_value()
         self.monitors.append(holding.monitor)
         self.holdings.remove(holding)
         del holding
-
-    def goShort(self,company_id,volume):
-        pass
 
     def update(self):
         for monitor in self.monitors:
@@ -55,10 +52,9 @@ class Trader:
                 self.goLong(monitor.company_id,1,monitor)
 
 class Holding:
-    def __init__(self,ticker,company_id,time_invested,volume,monitor):
+    def __init__(self,ticker,company_id,time_invested,monitor):
         self.time_invested = time_invested
         self.company_id = company_id
-        self.volume = volume
         self.ticker = ticker
         self.purchase_price = ticker.request(self.company_id)
         self.current_price = self.purchase_price
@@ -68,10 +64,10 @@ class Holding:
         self.monitor = monitor
 
     def get_value(self):
-        return(float(self.current_price * self.volume))
+        return(float(self.current_price))
 
     def get_net(self):
-        return(float((self.current_price-self.purchase_price) * self.volume))
+        return(float((self.current_price-self.purchase_price)))
 
     def update(self):
         self.value = self.get_value()

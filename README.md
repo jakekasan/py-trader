@@ -1,11 +1,12 @@
 # __py-trader__
 #### _the algo-trader written in Python_
 ### A simple python program that will eventually be able to read in financial data and make trades depending on given strategies
-- version 0.0.2
+- version 0.0.3
 
-### To-Do
-- [ ] finish the decision making function in the Trader class
-- [ ] give the Ticker class the option of sourcing live data from Google Finance or Yahoo Finance as well as using static data
-- [ ] fix the Monitor hand-off between Holding and the monitors list
-- [ ] create decision forces for when holding an asset
-- [ ] create decision forces for creating short positions
+### To-Do:
+
+- [ ] the strategy functions will now unpack pre-trained models using pickle
+- [ ] the monitor will handle all data manipulation and storage
+- [ ] the ticker will either provide data from a static past dataset, or it will request and format data from an online source
+- [ ] the trader will have the ability to go short as well as long
+- [ ] holdings can either be individual assets or portfolios

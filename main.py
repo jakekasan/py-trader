@@ -26,7 +26,9 @@ if __name__ == "__main__":
         actual_dataset = actual_dataset.set_index("date")
         actual_dataset = actual_dataset.fillna(0)
 
-        t = Ticker(actual_dataset)
+        test_dataset = actual_dataset.iloc[,:10]
+
+        t = Ticker(test_dataset)
 
         trader = Trader(t,10000.00)
         #trader.newHolding("AAPL",3)
