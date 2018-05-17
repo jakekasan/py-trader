@@ -15,30 +15,32 @@ FILE = "prices.csv"
 
 if __name__ == "__main__":
     try:
-        print("Running")
 
-        #createDataset(str(FILE_PATH+FILE),"symbol","close")
-
-        actual_dataset = pd.read_csv("price_movements.csv")
-
-        actual_dataset["date"] = pd.to_datetime(actual_dataset["date"])
-
-        actual_dataset = actual_dataset.set_index("date")
-        actual_dataset = actual_dataset.fillna(0)
-
-        test_dataset = actual_dataset.iloc[,:10]
-
-        t = Ticker(test_dataset)
-
-        trader = Trader(t,10000.00)
-        #trader.newHolding("AAPL",3)
-
-        while(True):
-            #t.status()
-            t.tick()
-            trader.update()
-            trader.status()
-            #time.sleep(0.01)
-            #t.request("AAPL")
+        #
+        # print("Running")
+        #
+        # #createDataset(str(FILE_PATH+FILE),"symbol","close")
+        #
+        # actual_dataset = pd.read_csv("price_movements.csv")
+        #
+        # actual_dataset["date"] = pd.to_datetime(actual_dataset["date"])
+        #
+        # actual_dataset = actual_dataset.set_index("date")
+        # actual_dataset = actual_dataset.fillna(0)
+        #
+        # test_dataset = actual_dataset.iloc[,:10]
+        #
+        # t = Ticker(test_dataset)
+        #
+        # trader = Trader(t,10000.00)
+        # #trader.newHolding("AAPL",3)
+        #
+        # while(True):
+        #     #t.status()
+        #     t.tick()
+        #     trader.update()
+        #     trader.status()
+        #     #time.sleep(0.01)
+        #     #t.request("AAPL")
     except KeyboardInterrupt:
-        print("Program stopped. Performance: %f" % (trader.wallet - 10000.00))
+        #print("Program stopped. Performance: %f" % (trader.wallet - 10000.00))
