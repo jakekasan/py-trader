@@ -2,10 +2,29 @@ import random
 import math
 import sys
 
+
+
+class City:
+    def __init__(self,name=None,x=None,y=None,rand=True):
+        if rand == True:
+            self.name = random.choice(city_names)
+            self.x = random.randint(-100,100)
+            self.y = random.randint(-100,100)
+        else:
+            self.name = name
+            self.x = x
+            self.y = y
+
+
+
+city_names = ["San Francisco","Prague","San Jose","Los Angeles","Dallas","Edinburgh","Fort William","Oban","Aberdeen","Glasgow","Brno","Plzen","Most","Roudnice","Perth","Cupar","Oslo","Helsinki","Bratislava","Rome","Milan","Paris","Nuremburg","Berlin"]
+
 pop_size = int(sys.argv[1])
 cities = []
 for _ in range(int(sys.argv[1])):
-    cities.append([random.randint(-10,10),random.randint(-10,10)])
+    cities.append(City(rand=True))
+
+
 
 mutation_rate = 0.01
 
@@ -33,8 +52,8 @@ def getDistance(cities):
     return dist
 
 def vectorDist(first,second):
-    a = first[0] - second[0]
-    b = first[1] - second[0]
+    a = first.x - second.x
+    b = first.y - second.y
     return math.sqrt(a**2 + b**2)
 
 def run(cities):
@@ -99,12 +118,8 @@ def reproducePopulation(pop,mutation_rate):
                 mating_pool.append(cities)
     print("Post mating pool",([] in mating_pool))
     for _ in pop:
-        print("Pre one",([] in mating_pool))
-        one = random.sample(mating_pool,1)[0]
-        print("Post one",([] in mating_pool))
-        two = random.sample(mating_pool,1)[0]
-        if one == [] or two == []:
-            print(([] in mating_pool))
+        one = random.choice(mating_pool)
+        two = random.choice(mating_pool)
         new_pop.append(reproduceTwo(one,two))
     for i in range(len(new_pop)):
         if random.random() < mutation_rate:
