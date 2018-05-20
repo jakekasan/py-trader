@@ -1,23 +1,7 @@
 import random
 import math
 import sys
-
-
-
-class City:
-    def __init__(self,name=None,x=None,y=None,rand=True):
-        if rand == True:
-            self.name = random.choice(city_names)
-            self.x = random.randint(-100,100)
-            self.y = random.randint(-100,100)
-        else:
-            self.name = name
-            self.x = x
-            self.y = y
-
-
-
-city_names = ["San Francisco","Prague","San Jose","Los Angeles","Dallas","Edinburgh","Fort William","Oban","Aberdeen","Glasgow","Brno","Plzen","Most","Roudnice","Perth","Cupar","Oslo","Helsinki","Bratislava","Rome","Milan","Paris","Nuremburg","Berlin"]
+from ts_tools import City,List,setup
 
 pop_size = int(sys.argv[1])
 cities = []
@@ -49,11 +33,13 @@ def getDistance(cities):
     dist = 0
     for i in range(len(cities)-1):
         dist += vectorDist(cities[i],cities[i+1])
+    if dist == 0:
+        dist = 1
     return dist
 
 def vectorDist(first,second):
-    a = first.x - second.x
-    b = first.y - second.y
+    a = first.getX() - second.getX()
+    b = first.getY() - second.getY()
     return math.sqrt(a**2 + b**2)
 
 def run(cities):
@@ -69,6 +55,8 @@ def run(cities):
 
 def runGA(cities,pop_size,mut_rate):
     pop = getInitialPopulation(cities,pop_size)
+    printPop(pop)
+    return
     counter = 0
     gens = 0
     while(True):
@@ -85,14 +73,19 @@ def printStatus(pop,gens):
     min_dist,index = getDistIndex(pop)
     print("Total distance: {}\nPoints: {}".format(min_dist,pop[index]))
 
+def printPop(pop):
+    i = 0
+    for cities in pop:
+        print("List #{}".format(i))
+        for city in cities:
+            print("Name: {}, X: {}, Y: {}".format(city.name,city.x,city.y))
+
 def getDistIndex(pop):
     listmap = list(map(getDistance,pop))
     min_dist = min(listmap)
     for i in range(len(listmap)):
         if listmap[i] == min_dist:
             return min_dist,i
-
-
 
 def getInitialPopulation(cities,pop_size):
     pop = []
@@ -101,46 +94,32 @@ def getInitialPopulation(cities,pop_size):
     return pop
 
 def reproducePopulation(pop,mutation_rate):
-    print("reproducing:")
-    for x in pop:
-        print(x)
     mating_pool = []
     new_pop = []
     min_dist = min(list(map(getDistance,pop)))
-    print("Pre mating pool",([] in mating_pool))
     for cities in pop:
         fitness = int(min_dist/(getDistance(cities))*100)
-        print(fitness)
-        for i in range(fitness):
-            if cities == []:
-                print(cities)
-            else:
+        if fitness > 0:
+            for i in range(fitness):
                 mating_pool.append(cities)
-    print("Post mating pool",([] in mating_pool))
-    for _ in pop:
-        one = random.choice(mating_pool)
-        two = random.choice(mating_pool)
-        new_pop.append(reproduceTwo(one,two))
+    selection = random.sample(mating_pool,(len(pop)*2))
+    for i in range(0,len(selection),2):
+        new_pop.append(reproduceTwo(selection[i],selection[i+1]))
     for i in range(len(new_pop)):
         if random.random() < mutation_rate:
             new_pop[i] = mutate(new_pop[i])
+    print("Mating pool: {}\nNew pop: {}\nMin distance: {}".format(len(mating_pool),len(new_pop),min_dist))
+    printPop(new_pop)
     return new_pop
 
 def reproduceTwo(one,two):
-    print(one)
-    print(two)
-    newList = [0 for _ in one]
-    a = random.randint(0,(len(one)-2))
-    b = random.randint(a+1,(len(one)-1))
-    if a == b:
-        newList[a:(b+1)] = one[a:(b+1)]
-    for i in [x for x in range((len(two)-1),0,-1)]:
-        if (two[i] not in newList) and (i not in [x for x in range(a,b+1)]):
-            newList[i] = two.pop(i)
-    while 0 in newList:
-        for i in [x for x in range(len(newList))]:
-            if newList[i] == 0:
-                newList[i] = two.pop(0)
+    newList = []
+    a = random.randint(0,(len(one)-1))
+    newList += one[a:]
+    for i in range((len(two)-1),0,-1):
+        if two[i] in newList:
+            two.pop(i)
+    newList += two
     return newList
 
 def mutate(cities):
@@ -153,12 +132,5 @@ def mutate(cities):
     cities[b] = hold
 
     return cities
-
-
-
-
-
-
-
 
 runGA(cities,pop_size,mutation_rate)
