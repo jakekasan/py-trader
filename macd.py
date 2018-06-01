@@ -163,7 +163,7 @@ def GA(popSize,stock,df,mut_rate,two=False):
     stock: the name of the stock being targeted
     df: a dataframe which contains a column with the name of the stock as its name
     mut_rate: The mutation rate to apply when reproducing a new population
-    two: boolean for if the short and long variables in the MACD signal should be subject to the genetic algorithm
+    two: boolean for if only the first two parameters should be mutates (true) or if all parameters should be mutated (false)
 
     """
     population = []
